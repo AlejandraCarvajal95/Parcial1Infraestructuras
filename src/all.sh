@@ -8,8 +8,18 @@
 # Autor: John Sanabria - john.sanabria@correounivalle.edu.co
 # Fecha: 2024-08-22
 #
-INPUT_PNG="image.png"
+INPUT_DIR="public/assets/"
+OUTPUT_DIR="public/assets/results/"
 TEMP_FILE="image.bin"
-python3 fromPNG2Bin.py ${INPUT_PNG}
-./main ${TEMP_FILE}
-python3 fromBin2PNG.py ${TEMP_FILE}.new
+
+# Crear directorio de resultados si no existe
+mkdir -p ${OUTPUT_DIR}
+
+# Procesar cada imagen PNG en el directorio de entrada
+for INPUT_PNG in ${INPUT_DIR}*.png; do
+    # Verificar si hay archivos PNG en el directorio
+    if [ -f "$INPUT_PNG" ]; then
+        # Extraer el nombre base del archivo (sin la ruta y extensión)
+        BASENAME=$(basename "$INPUT_PNG" .png)
+
+        # Convertir de PNG a secuencia de píx
