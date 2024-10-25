@@ -8,18 +8,30 @@
 # Autor: John Sanabria - john.sanabria@correounivalle.edu.co
 # Fecha: 2024-08-22
 #
-INPUT_DIR="public/assets/"
-OUTPUT_DIR="public/assets/results/"
+
+# Directorios de entrada y salida
+INPUT_DIR="/workspaces/Parcial1Infraestructuras/public/assets/"
+OUTPUT_DIR="/workspaces/Parcial1Infraestructuras/public/results/"
 TEMP_FILE="image.bin"
 
-# Crear directorio de resultados si no existe
-mkdir -p ${OUTPUT_DIR}
+# Crear el directorio de salida si no existe
+mkdir -p "$OUTPUT_DIR"
 
-# Procesar cada imagen PNG en el directorio de entrada
-for INPUT_PNG in ${INPUT_DIR}*.png; do
+# Procesar cada archivo PNG en el directorio de entrada
+for INPUT_PNG in "${INPUT_DIR}"*.png; do
     # Verificar si hay archivos PNG en el directorio
-    if [ -f "$INPUT_PNG" ]; then
-        # Extraer el nombre base del archivo (sin la ruta y extensión)
-        BASENAME=$(basename "$INPUT_PNG" .png)
+    if [ ! -e "$INPUT_PNG" ]; then
+        echo "No se encontraron archivos PNG en $INPUT_DIR"
+        exit 1
+    fi
 
-        # Convertir de PNG a secuencia de píx
+    echo "Procesando: ${INPUT_PNG}"
+
+    TEMP_FILE="${INPUT_PNG%.png}.bin"
+
+    python3 fromPNG2Bin.py ${INPUT_PNG}
+    ./main ${TEMP_FILE}                      
+    python3 fromBin2PNG.py ${TEMP_FILE}.new
+
+    echo "Procesado y guardado: ${INPUT_PNG}"
+done
